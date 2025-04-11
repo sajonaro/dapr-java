@@ -1,0 +1,6 @@
+services:
+  sender:
+    build:
+      context: ./sender
+      dockerfile: Dockerfile
+    command: java -jar /app/target/SenderService-1.0.jar
