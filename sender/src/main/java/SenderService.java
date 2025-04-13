@@ -6,7 +6,7 @@ public class SenderService {
 
     try {
       
-      URL url = new URL("http://localhost:3500/v1.0/invoke/receiver/method/api/ping");
+      URL url = new URL("http://localhost:3500/v1.0/invoke/receiver/method/ping");
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setRequestMethod("GET");
   
