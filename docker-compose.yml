@@ -1,6 +1,49 @@
+---
 services:
   sender:
     build:
       context: ./sender
       dockerfile: Dockerfile
-    command: java -jar /app/target/SenderService-1.0.jar
+    #command: java -jar /app/target/SenderService-1.0.jar
+    #command: curl http://localhost:3500/v1.0/invoke/receiver/method/api/ping
+    entrypoint: tail -f /dev/null
+    depends_on:
+      receiver:
+        condition: service_healthy
+    
+  
+  sender_dapr:
+    image: ${DAPR_IMAGE}
+    command: ./daprd -app-id sender -app-port 80 --log-level debug -config /dapr/config.yaml -components-path /dapr/local
+    volumes:
+      - ./dapr_components:/dapr      
+    depends_on:
+      - sender
+    network_mode: "service:sender"
+  
+  #pong:
+  receiver:
+    build:
+      context: ./receiver
+      dockerfile: Dockerfile
+    ports:
+      - "${RECEIVER_EXPOSED_PORT}:${RECEIVER_PORT}"  
+    environment:
+      - PORT=${RECEIVER_PORT} 
+    command: java -jar /app/target/ReceiverService-1.0.jar
+    healthcheck:
+      test: curl --fail http://localhost:${RECEIVER_PORT}/ || exit 1
+      interval: 40s
+      timeout: 30s
+      retries: 3
+      start_period: 60s
+       
+
+  receiver_dapr:
+    image: ${DAPR_IMAGE}
+    command: ./daprd -app-id receiver -app-port 80 --log-level debug -config /dapr/config.yaml -components-path /dapr/local     
+    volumes:
+      - ./dapr_components:/dapr 
+    depends_on:
+      - receiver
+    network_mode: "service:receiver"
