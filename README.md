@@ -24,7 +24,10 @@ This project explores [dapr](https://docs.dapr.io/), more specifically, `dapr's`
     ```bash
     # attach to `sender` container and run the java application in it
     $ docker compose exec sender java -jar /app/target/SenderService-1.0.jar
+         
     ```
+    The above command should result in { "response": "pong"} JSON object being returned from receiver/ping method
+
 - Alternatively (Step 4)
   ```bash
   # run the curl command directly from within `sender` container
@@ -38,7 +41,7 @@ This project explores [dapr](https://docs.dapr.io/), more specifically, `dapr's`
     - 3500 is the default dapr HTTP port
     - **SERVICE_NAME** - is the name of the service `receiver` in the network
     - **API_ROUTE** - is the URL of the method to inkoke relative to the service `receiver` 
- - Final detail: (actually optional) we use [traefik](https://traefik.io/traefik/) as api proxy to give `receiver's` method the route `/ping` relative to the receiver's host, e.g. `curl http://localhost/ping` run from the host invokes this microservice. In other words, without traefik, this we can just use `curl http://localhost:8087` command
+ - Final detail: (actually optional) we use [traefik](https://traefik.io/traefik/) as api proxy to give `receiver's` method the route `/ping` relative to the receiver's host, e.g. `curl http://localhost/ping` run from the host invokes this microservice. In other words, without traefik, we can just use `curl http://localhost:8087` command for the same result
 ## issues
 
 - issue with unavailable docker.sock on linux
